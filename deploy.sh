@@ -31,7 +31,7 @@ az deployment group create \
       adminPasswordOrKey="$(cat "$KEYFILE.pub")" \
       location="$LOCATION"
 
-echo "⏳  Waiting for deployment to finish ..."
+echo "Waiting for deployment to finish ..."
 az deployment group wait \
   --resource-group "$RESOURCE_GROUP" \
   --name "n8nPrivateSubnet" \
