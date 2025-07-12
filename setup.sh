@@ -9,7 +9,6 @@ sudo sh get-docker.sh
 
 # Add current user to docker group to avoid permission issues
 sudo usermod -aG docker $USER
-# Notify about group changes
 echo "Added user to docker group. You may need to log out and back in for this to take effect."
 
 sudo curl -L "https://github.com/docker/compose/releases/download/v2.38.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -28,29 +27,25 @@ read -p "Enter your domain name: " domain_name
 # Create Caddyfile with user's domain
 cat << EOF | sudo tee /etc/caddy/Caddyfile
 ${domain_name} {
+    tls internal
+
     # Add debug logging
     log {
         output stderr
         format console
         level DEBUG
     }
-    
+
     # Add security headers
     header {
-        # Enable HSTS
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
-        # Disable FLoC tracking
         Permissions-Policy "interest-cohort=()"
-        # XSS protection
         X-XSS-Protection "1; mode=block"
-        # Prevent clickjacking
         X-Frame-Options "SAMEORIGIN"
-        # Disable MIME type sniffing
         X-Content-Type-Options "nosniff"
     }
 
     reverse_proxy localhost:5678 {
-        # Add WebSocket support
         header_up X-Forwarded-Proto "https"
         header_up X-Forwarded-For {remote_host}
         header_up Host {host}
@@ -68,10 +63,9 @@ mkdir -p n8n && mv docker-compose.yml n8n && cd n8n
 # Set N8N_HOST environment variable both in .env and current session
 export N8N_HOST="${domain_name}"
 echo "N8N_HOST=${domain_name}" > .env
-echo "N8N_PROTOCOL=https" >> .env
+echo "N8N_PROTOCOL=http" >> .env     # n8n runs behind Caddy over plain HTTP
 echo "N8N_PORT=5678" >> .env
 echo "N8N_ENCRYPTION_KEY=$(openssl rand -hex 32)" >> .env
 
-# Notify user to log out and back in
 echo "Setup complete! Please log out and log back in for docker permissions to take effect."
-echo "Then run 'docker-compose up -d' in the n8n directory to start the containers." 
+echo "Then run 'docker-compose up -d' in the n8n directory to start the containers."

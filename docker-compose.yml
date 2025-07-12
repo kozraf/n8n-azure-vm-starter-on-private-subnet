@@ -22,8 +22,7 @@ services:
       - N8N_HOST=${N8N_HOST}
       - WEBHOOK_URL=https://${N8N_HOST}
       - NODE_ENV=production
-      - N8N_PROTOCOL=https
-      - N8N_SSL_CERT=/etc/caddy/certificates/${N8N_HOST}.crt
+      - N8N_PROTOCOL=http          # Caddy terminates TLS
       - N8N_PORT=5678
       - GENERIC_TIMEZONE=UTC
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
@@ -51,4 +50,4 @@ services:
 
 volumes:
   n8n_data:
-  postgres_data: 
+  postgres_data:
