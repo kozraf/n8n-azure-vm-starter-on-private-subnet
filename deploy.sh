@@ -5,6 +5,7 @@ RESOURCE_GROUP="n8n-rg"
 LOCATION="eastus2"
 VM_NAME="n8n-vm"
 ADMIN_USERNAME="n8nadmin"
+PRIVATE_DNS_ZONE="internal.contoso"
 
 # 
 #  Create (or check) resource group
@@ -30,7 +31,7 @@ az deployment group create \
       adminUsername="$ADMIN_USERNAME" \
       adminPasswordOrKey="$(cat "$KEYFILE.pub")" \
       location="$LOCATION" \
-      privateDnsZoneName="internal.contoso"
+      privateDnsZoneName=$PRIVATE_DNS_ZONE
 
 echo "Waiting for deployment to finish ..."
 az deployment group wait \
@@ -53,8 +54,5 @@ echo "   Private IP : $VM_IP"
 echo
 echo "SSH (inside VNet or via Bastion):"
 echo "   ssh -i $KEYFILE $ADMIN_USERNAME@$VM_IP"
-echo
-echo "Copy bootstrap scripts:"
-echo "   scp -i $KEYFILE setup.sh docker-compose.yml backup.sh \\"
-echo "       $ADMIN_USERNAME@$VM_IP:~/"
-echo
+
+
