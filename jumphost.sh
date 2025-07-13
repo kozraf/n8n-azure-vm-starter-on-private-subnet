@@ -12,7 +12,7 @@ SUBNET_NAME="default"          # subnet inside the VNet
 VM_NAME="jumphost"
 VM_SIZE="Standard_D2s_v3"
 ADMIN_USER="n8n-user"
-ADMIN_PASS="!!!P455w0rd!!!"    # meets Azure complexity rules
+ADMIN_PASS="!!!P455w0rd!!!"    # meets Azure complexity rules - reset after deployment
 
 # Windows Server 2025 Datacenter Azure Edition (Gen2) image URN
 IMAGE_URN="MicrosoftWindowsServer:WindowsServer:2025-datacenter-azure-edition:latest"
@@ -20,8 +20,8 @@ IMAGE_URN="MicrosoftWindowsServer:WindowsServer:2025-datacenter-azure-edition:la
 # 
 #  PRE-FLIGHT
 # 
-echo "Accepting marketplace terms for $IMAGE_URN (no-op if already done)…"
-az vm image terms accept --urn "$IMAGE_URN" >/dev/null
+#echo "Accepting marketplace terms for $IMAGE_URN (no-op if already done)…"
+#az vm image terms accept --urn "$IMAGE_URN" >/dev/null
 
 echo "Fetching VNet ID …"
 VNET_ID=$(az network vnet show \
@@ -51,7 +51,7 @@ az vm create \
   --public-ip-address "" \
   --nsg "" \
   --enable-agent true \
-  --license-type "" \
+  --license-type "Windows_Server" \
   >/dev/null
 
 # 
