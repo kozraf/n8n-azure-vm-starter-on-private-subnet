@@ -27,6 +27,11 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": { "description": "Resource-group location" }
+    },
+    "privateDnsZoneName": {
+    "type": "string",
+    "defaultValue": "internal.contoso",
+    "metadata": { "description": "Private DNS zone name" }
     }
   },
 
@@ -40,7 +45,9 @@
     "networkSecurityGroupName": "[concat(parameters('vmName'), '-nsg')]",
     "virtualNetworkName":       "[concat(parameters('vmName'), '-vnet')]",
     "subnetName":               "default",
-    "nicName":                  "[concat(parameters('vmName'), '-nic')]"
+    "nicName":                  "[concat(parameters('vmName'), '-nic')]",
+
+    "virtualNetworkLinkName": "[concat(parameters('vmName'), '-dnslink')]"
   },
 
 
@@ -177,7 +184,35 @@
           ]
         }
       }
+    },
+
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2020-06-01",
+      "name": "[parameters('privateDnsZoneName')]",
+      "location": "global",
+      "properties": {}
+    },
+
+
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2020-06-01",
+      "name": "[concat(parameters('privateDnsZoneName'), '/', variables('virtualNetworkLinkName'))]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', parameters('privateDnsZoneName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+      ],
+      "properties": {
+        "registrationEnabled": true,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]"
+        }
+      }
     }
+
+
   ],
   "outputs": {}
 }

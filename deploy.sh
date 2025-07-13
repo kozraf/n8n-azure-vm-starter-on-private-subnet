@@ -29,7 +29,8 @@ az deployment group create \
       vmName="$VM_NAME" \
       adminUsername="$ADMIN_USERNAME" \
       adminPasswordOrKey="$(cat "$KEYFILE.pub")" \
-      location="$LOCATION"
+      location="$LOCATION" \
+      privateDnsZoneName="internal.contoso"
 
 echo "Waiting for deployment to finish ..."
 az deployment group wait \
