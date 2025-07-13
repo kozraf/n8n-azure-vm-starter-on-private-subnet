@@ -1,8 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-
-
   "parameters": {
     "vmName": {
       "type": "string",
@@ -29,69 +27,32 @@
       "metadata": { "description": "Resource-group location" }
     },
     "privateDnsZoneName": {
-    "type": "string",
-    "defaultValue": "internal.contoso",
-    "metadata": { "description": "Private DNS zone name" }
+      "type": "string",
+      "defaultValue": "internal.contoso",
+      "metadata": { "description": "Private DNS zone name" }
     }
   },
-
-
   "variables": {
     "vmSize": "Standard_B1ms",
     "imagePublisher": "Canonical",
     "imageOffer": "0001-com-ubuntu-server-jammy",
-    "imageSku":   "22_04-lts",
-
+    "imageSku": "22_04-lts",
     "networkSecurityGroupName": "[concat(parameters('vmName'), '-nsg')]",
-    "virtualNetworkName":       "[concat(parameters('vmName'), '-vnet')]",
-    "subnetName":               "default",
-    "nicName":                  "[concat(parameters('vmName'), '-nic')]",
-
+    "virtualNetworkName": "[concat(parameters('vmName'), '-vnet')]",
+    "subnetName": "default",
+    "nicName": "[concat(parameters('vmName'), '-nic')]",
     "virtualNetworkLinkName": "[concat(parameters('vmName'), '-dnslink')]"
   },
-
-
   "resources": [
-
-
     {
       "type": "Microsoft.Network/networkSecurityGroups",
       "apiVersion": "2023-09-01",
       "name": "[variables('networkSecurityGroupName')]",
       "location": "[parameters('location')]",
       "properties": {
-        "securityRules": [
-          {
-            "name": "SSH-INTRA",
-            "properties": {
-              "priority": 1000,
-              "protocol": "Tcp",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourceAddressPrefix": "10.0.0.0/8",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*",
-              "destinationPortRange": "22"
-            }
-          },
-          {
-            "name": "HTTPS-INTRA",
-            "properties": {
-              "priority": 1001,
-              "protocol": "Tcp",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourceAddressPrefix": "10.0.0.0/8",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*",
-              "destinationPortRange": "443"
-            }
-          }
-        ]
+        "securityRules": []
       }
     },
-
-
     {
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2023-09-01",
@@ -115,8 +76,6 @@
         ]
       }
     },
-
-
     {
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2023-09-01",
@@ -139,8 +98,6 @@
         ]
       }
     },
-
-
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2023-09-01",
@@ -169,9 +126,9 @@
         "storageProfile": {
           "imageReference": {
             "publisher": "[variables('imagePublisher')]",
-            "offer":     "[variables('imageOffer')]",
-            "sku":       "[variables('imageSku')]",
-            "version":   "latest"
+            "offer": "[variables('imageOffer')]",
+            "sku": "[variables('imageSku')]",
+            "version": "latest"
           },
           "osDisk": {
             "createOption": "FromImage",
@@ -185,7 +142,6 @@
         }
       }
     },
-
     {
       "type": "Microsoft.Network/privateDnsZones",
       "apiVersion": "2020-06-01",
@@ -193,8 +149,6 @@
       "location": "global",
       "properties": {}
     },
-
-
     {
       "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
       "apiVersion": "2020-06-01",
@@ -211,8 +165,6 @@
         }
       }
     }
-
-
   ],
   "outputs": {}
 }
